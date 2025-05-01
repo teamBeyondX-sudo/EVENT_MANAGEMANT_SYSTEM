@@ -1,177 +1,123 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
-import { ArrowRight, Mail, Lock } from "lucide-react"
-import { motion } from "framer-motion"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [emailError, setEmailError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    role: "student"
+  })
   const router = useRouter()
-
-  const validateEmail = (email: string) => {
-    const regex = /@brainwareuniversity\.ac\.in$/
-    if (!regex.test(email) && email) {
-      setEmailError("Please use your Brainware University email (@brainwareuniversity.ac.in)")
-      return false
-    }
-    setEmailError("")
-    return true
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (validateEmail(email)) {
-      setIsLoading(true)
 
-      try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
 
-        // In a real app, you would make an API call here
-        // const response = await fetch('/api/auth/login', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ email, password }),
-        // })
-
-        // if (!response.ok) throw new Error('Login failed')
-
-        router.push("/dashboard")
-      } catch (error) {
-        console.error("Login error:", error)
-      } finally {
-        setIsLoading(false)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.user.role === 'admin') {
+          router.push('/admin')
+        } else {
+          router.push('/dashboard')
+        }
       }
+    } catch (error) {
+      console.error('Login failed:', error)
     }
   }
 
   return (
-    <div className="min-h-[calc(100vh-73px)] w-full flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="w-full max-w-md"
-      >
-        <div className="backdrop-blur-lg bg-black/30 border border-white/10 rounded-2xl shadow-[0_0_15px_rgba(149,128,255,0.2)] p-6 md:p-8">
-          <div className="mb-8 text-center">
-            <motion.h1
-              className="text-3xl font-bold text-white mb-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              Welcome Back
-            </motion.h1>
-            <motion.p
-              className="text-gray-300"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              Sign in to access Brainware University events
-            </motion.p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black p-4">
+      <div className="w-full max-w-md space-y-8 bg-black/30 p-8 rounded-xl border border-white/10">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
+          <p className="text-gray-400">Please sign in to continue</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <RadioGroup 
+            defaultValue="student" 
+            className="grid grid-cols-2 gap-4 mb-4"
+            onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+          >
+            <div>
+              <RadioGroupItem
+                value="student"
+                id="student"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="student"
+                className="flex flex-col items-center justify-between rounded-md border-2 border-white/10 bg-black/20 p-4 hover:bg-black/30 peer-checked:border-purple-600"
+              >
+                <span className="text-white">Student</span>
+              </Label>
+            </div>
+            <div>
+              <RadioGroupItem
+                value="admin"
+                id="admin"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="admin"
+                className="flex flex-col items-center justify-between rounded-md border-2 border-white/10 bg-black/20 p-4 hover:bg-black/30 peer-checked:border-purple-600"
+              >
+                <span className="text-white">Admin</span>
+              </Label>
+            </div>
+          </RadioGroup>
+
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-white">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              className="bg-black/20 border-white/10 text-white"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+            />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <motion.div
-              className="space-y-2"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <div className="relative">
-                <Label htmlFor="email" className="text-sm text-gray-300 mb-1 block">
-                  University Email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value)
-                      if (e.target.value) validateEmail(e.target.value)
-                    }}
-                    onBlur={() => validateEmail(email)}
-                    placeholder="your.name@brainwareuniversity.ac.in"
-                    className="pl-10 bg-black/20 border-gray-700 focus:border-purple-500 text-white placeholder:text-gray-500 shadow-[0_0_10px_rgba(149,128,255,0.1)] transition-all focus:shadow-[0_0_15px_rgba(149,128,255,0.3)]"
-                  />
-                </div>
-                {emailError && <p className="text-red-400 text-xs mt-1">{emailError}</p>}
-              </div>
-            </motion.div>
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-white">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              className="bg-black/20 border-white/10 text-white"
+              value={formData.password}
+              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+            />
+          </div>
 
-            <motion.div
-              className="space-y-2"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <div className="relative">
-                <Label htmlFor="password" className="text-sm text-gray-300 mb-1 block">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="pl-10 bg-black/20 border-gray-700 focus:border-purple-500 text-white placeholder:text-gray-500 shadow-[0_0_10px_rgba(149,128,255,0.1)] transition-all focus:shadow-[0_0_15px_rgba(149,128,255,0.3)]"
-                  />
-                </div>
-              </div>
-              <div className="text-right">
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            </motion.div>
+          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
+            Sign In <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </form>
 
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-              <Button
-                type="submit"
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 rounded-md transition-all duration-300 hover:shadow-[0_0_15px_rgba(149,128,255,0.5)] flex items-center justify-center gap-2 group"
-                disabled={!email || !password || !!emailError || isLoading}
-              >
-                {isLoading ? "Signing In..." : "Sign In"}
-                {!isLoading && (
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                )}
-              </Button>
-            </motion.div>
-          </form>
-
-          <motion.div
-            className="mt-6 text-center text-sm text-gray-400"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-purple-400 hover:text-purple-300 transition-colors">
-              Register here
-            </Link>
-          </motion.div>
-        </div>
-      </motion.div>
+        <p className="text-center text-gray-400">
+          Don't have an account?{" "}
+          <Link href="/register" className="text-purple-400 hover:text-purple-300">
+            Register here
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }

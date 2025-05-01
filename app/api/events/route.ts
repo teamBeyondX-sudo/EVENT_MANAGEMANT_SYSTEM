@@ -47,6 +47,10 @@ export async function POST(request: Request) {
   try {
     const user = await authenticateUser(request);
     if ((user as any).role !== 'admin') {
+      return NextResponse.json({ error: 'Only admins can create events' }, { status: 403 });
+    }
+    const user = await authenticateUser(request);
+    if ((user as any).role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
