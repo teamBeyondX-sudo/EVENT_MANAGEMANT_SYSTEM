@@ -1,29 +1,37 @@
+
 import { NextResponse } from 'next/server';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
+    const { email, password, role } = await request.json();
 
+    // Find user by email and role
     const user = await db.query.users.findFirst({
-      where: eq(users.email, email),
+      where: and(
+        eq(users.email, email),
+        eq(users.role, role)
+      ),
     });
 
-    if (!user || !(await compare(password, user.password))) {
+    if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // Check if the role matches
-    if (user.role !== formData.role) {
-      return NextResponse.json({ error: 'Invalid role for this user' }, { status: 403 });
+    const isValidPassword = await compare(password, user.password);
+    if (!isValidPassword) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!);
+    const token = sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET || 'your-secret-key'
+    );
 
     cookies().set('token', token, {
       httpOnly: true,
@@ -41,7 +49,11 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Login error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -49,5 +61,5 @@ export async function GET() {
   return NextResponse.json(
     { error: "Method not allowed" },
     { status: 405 }
-  )
+  );
 }
