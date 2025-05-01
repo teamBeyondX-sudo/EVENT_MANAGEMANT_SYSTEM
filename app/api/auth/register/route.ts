@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       success: true,
       message: "Registration successful",
       userId: "user_" + Math.random().toString(36).substr(2, 9),
-    }, { status: 201 })
+    })
   } catch (error) {
     console.error("Registration error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

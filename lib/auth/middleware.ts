@@ -2,37 +2,28 @@
 import { NextResponse } from 'next/server';
 import { verify } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
-import { db } from '@/lib/db';
-import { users } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
 
 export async function authenticateUser(request: Request) {
   const token = cookies().get('token')?.value;
   
   if (!token) {
-    throw new Error('Unauthorized');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const decoded = verify(token, process.env.JWT_SECRET!) as any;
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, decoded.id)
-    });
-    
-    if (!user) {
-      throw new Error('User not found');
-    }
-    
-    return user;
+    const decoded = verify(token, process.env.JWT_SECRET!);
+    return decoded;
   } catch (error) {
-    throw new Error('Invalid token');
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
   }
 }
 
-export async function checkRole(request: Request, allowedRoles: string[]) {
+export async function authenticateAdmin(request: Request) {
   const user = await authenticateUser(request);
-  if (!allowedRoles.includes(user.role)) {
-    throw new Error('Forbidden');
+  
+  if ((user as any).role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
+  
   return user;
 }
