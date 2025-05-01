@@ -26,7 +26,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex h-screen bg-gradient-to-br from-gray-900 to-black">
+      <div className="flex h-screen"> {/* Changed class name here */}
         <AdminSidebar />
         <main className="flex-1 overflow-auto p-4 md:p-6">
           <div className="flex items-center justify-between mb-6">

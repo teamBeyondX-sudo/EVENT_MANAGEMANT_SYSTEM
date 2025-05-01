@@ -9,6 +9,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 
+// Placeholder for GlassCard component -  Implementation needed to fulfill user request.
+const GlassCard = ({ children }) => <div className="bg-black/40 border-white/10 backdrop-blur-lg p-6">{children}</div>;
+
+
 export default function Dashboard() {
   return (
     <div className="min-h-[calc(100vh-73px)] p-4 md:p-6">
@@ -74,7 +78,7 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <Card className="backdrop-blur-lg bg-black/30 border-white/10 shadow-[0_0_15px_rgba(149,128,255,0.1)]">
+            <GlassCard>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-white">Upcoming Events</CardTitle>
@@ -94,7 +98,7 @@ export default function Dashboard() {
                   ))}
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
           </motion.div>
 
           {/* Profile Summary */}
@@ -103,7 +107,7 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <Card className="backdrop-blur-lg bg-black/30 border-white/10 shadow-[0_0_15px_rgba(149,128,255,0.1)]">
+            <GlassCard>
               <CardHeader>
                 <CardTitle className="text-white">Your Profile</CardTitle>
                 <CardDescription className="text-gray-400">Academic progress and achievements</CardDescription>
@@ -162,7 +166,7 @@ export default function Dashboard() {
                   </Button>
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
           </motion.div>
         </div>
 
@@ -173,7 +177,7 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <Card className="backdrop-blur-lg bg-black/30 border-white/10 shadow-[0_0_15px_rgba(149,128,255,0.1)]">
+          <GlassCard>
             <CardHeader>
               <CardTitle className="text-white">Recent Announcements</CardTitle>
               <CardDescription className="text-gray-400">Important updates from Brainware University</CardDescription>
@@ -202,7 +206,7 @@ export default function Dashboard() {
                 ))}
               </div>
             </CardContent>
-          </Card>
+          </GlassCard>
         </motion.div>
       </div>
     </div>
@@ -226,7 +230,7 @@ function StatsCard({
 }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay }}>
-      <Card className="backdrop-blur-lg bg-black/30 border-white/10 shadow-[0_0_15px_rgba(149,128,255,0.1)] hover:shadow-[0_0_20px_rgba(149,128,255,0.2)] transition-all duration-300">
+      <GlassCard>
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="h-12 w-12 rounded-full bg-purple-500/10 flex items-center justify-center">
@@ -245,7 +249,7 @@ function StatsCard({
             <p className="text-gray-400 text-xs mt-1">{description}</p>
           </div>
         </CardContent>
-      </Card>
+      </GlassCard>
     </motion.div>
   )
 }
