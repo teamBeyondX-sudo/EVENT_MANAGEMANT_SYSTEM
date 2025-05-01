@@ -8,9 +8,6 @@ import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Download, Award, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react"
-//This is a placeholder.  A real GlassCard component would need to be defined.
-const GlassCard = ({children}) => <div className="bg-black/40 border-white/10 backdrop-blur-sm shadow-[0_0_15px_rgba(149,128,255,0.1)]">{children}</div>
-
 
 export default function ProfilePage() {
   return (
@@ -22,7 +19,7 @@ export default function ProfilePage() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <GlassCard className="p-6">
+          <Card className="bg-black/40 border-white/10 backdrop-blur-sm shadow-[0_0_15px_rgba(149,128,255,0.1)]">
             <CardContent className="p-6 md:p-8">
               <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
                 <div className="relative">
@@ -63,7 +60,7 @@ export default function ProfilePage() {
                 </div>
               </div>
             </CardContent>
-          </GlassCard>
+          </Card>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

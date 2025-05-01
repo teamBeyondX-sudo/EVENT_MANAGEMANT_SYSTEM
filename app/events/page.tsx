@@ -148,7 +148,7 @@ function EventCard({ event, index }: { event: any; index: number }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Card className="overflow-hidden hover-card glass-effect"> {/*This is the only change implemented*/}
+      <Card className="overflow-hidden hover-card glass-effect">
         <div className="relative h-48 overflow-hidden">
           <div className="absolute inset-0 bg-black/50 z-10" />
           <img
