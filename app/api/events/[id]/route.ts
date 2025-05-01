@@ -1,22 +1,31 @@
-import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
-import { events } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { events, registrations } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 import { authenticateUser } from '@/lib/auth/middleware';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
-    const id = await params.id
-    const event = await db.select().from(events).where(eq(events.id, id))
+    const event = await db.query.events.findFirst({
+      where: eq(events.id, params.id),
+      with: {
+        category: true,
+        club: true,
+        registrations: {
+          with: {
+            user: true
+          }
+        }
+      }
+    });
 
-    if (!event.length) {
-      return NextResponse.json({ error: 'Event not found' }, { status: 404 })
+    if (!event) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
 
-    return NextResponse.json(event[0])
+    return NextResponse.json(event);
   } catch (error) {
-    console.error("Failed to fetch event:", error)
-    return NextResponse.json({ error: "Failed to fetch event" }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to fetch event' }, { status: 500 });
   }
 }
 
