@@ -2420,14 +2420,14 @@ body{
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.hover\:shadow-\[0_0_20px_rgba\(149\2c 128\2c 255\2c 0\.2\)\]:hover{
-  --tw-shadow: 0 0 20px rgba(149,128,255,0.2);
+.hover\:shadow-\[0_0_20px_rgba\(149\2c 128\2c 255\2c 0\.4\)\]:hover{
+  --tw-shadow: 0 0 20px rgba(149,128,255,0.4);
   --tw-shadow-colored: 0 0 20px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.hover\:shadow-\[0_0_20px_rgba\(149\2c 128\2c 255\2c 0\.4\)\]:hover{
-  --tw-shadow: 0 0 20px rgba(149,128,255,0.4);
+.hover\:shadow-\[0_0_20px_rgba\(149\2c 128\2c 255\2c 0\.2\)\]:hover{
+  --tw-shadow: 0 0 20px rgba(149,128,255,0.2);
   --tw-shadow-colored: 0 0 20px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
