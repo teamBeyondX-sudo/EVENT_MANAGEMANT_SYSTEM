@@ -19,10 +19,30 @@ export default function LandingPage() {
             className="max-w-4xl mx-auto text-center"
           >
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
-              <span className="opacity-50 block mb-2">DISCOVER</span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-500">
-                Campus Life at Brainware
-              </span>
+              <motion.span 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.5, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="block mb-2"
+              >
+                DISCOVER & CONNECT
+              </motion.span>
+              <motion.span 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-gradient"
+              >
+                Your Campus Journey
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-gradient block text-4xl md:text-5xl mt-2"
+              >
+                at Brainware
+              </motion.span>
             </h1>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               Connect with events, clubs, and activities that shape your university experience

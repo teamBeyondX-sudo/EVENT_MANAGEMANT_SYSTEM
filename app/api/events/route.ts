@@ -3,6 +3,52 @@ import { NextResponse } from "next/server"
 // Mock database of events
 const events = [
   {
+    id: 7,
+    title: "Hackathon 2024: Code for Change",
+    description: "48-hour coding challenge to build solutions for social impact. Prizes worth ₹50,000!",
+    date: "July 1-3, 2024",
+    time: "9:00 AM onwards",
+    location: "Tech Hub, Main Campus",
+    category: "Technology",
+    isPaid: false,
+    image: "/events/hackathon.jpg",
+    organizer: "Tech Club",
+    attendees: 120,
+    maxAttendees: 200,
+    tags: ["coding", "innovation", "teamwork"]
+  },
+  {
+    id: 8,
+    title: "Cultural Night: Fusion Fest",
+    description: "A celebration of diversity through music, dance, and art performances.",
+    date: "July 15, 2024",
+    time: "6:00 PM - 10:00 PM",
+    location: "Open Air Theatre",
+    category: "Cultural",
+    isPaid: true,
+    price: "₹200",
+    image: "/events/cultural.jpg",
+    organizer: "Cultural Committee",
+    attendees: 250,
+    maxAttendees: 500,
+    tags: ["music", "dance", "art"]
+  },
+  {
+    id: 9,
+    title: "Career Fair 2024",
+    description: "Meet recruiters from top companies. On-spot interviews and internship opportunities.",
+    date: "July 20, 2024",
+    time: "10:00 AM - 4:00 PM",
+    location: "Convention Center",
+    category: "Career",
+    isPaid: false,
+    image: "/events/career.jpg",
+    organizer: "Placement Cell",
+    attendees: 400,
+    maxAttendees: 1000,
+    tags: ["placement", "networking", "career"]
+  },
+  {
     id: 1,
     title: "Tech Innovators Summit 2023",
     description:

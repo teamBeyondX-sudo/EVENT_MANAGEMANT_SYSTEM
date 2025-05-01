@@ -36,5 +36,15 @@ export function SplineBackground() {
     }
   }, [])
 
-  return <div ref={containerRef} className="fixed inset-0 w-full h-full z-0 bg-black" aria-hidden="true" />
+  return (
+  <div 
+    ref={containerRef} 
+    className="fixed inset-0 w-full h-full z-0 bg-gradient-to-br from-black via-purple-900/20 to-black" 
+    aria-hidden="true"
+    style={{ 
+      willChange: 'transform',
+      transform: 'translateZ(0)',
+    }} 
+  />
+)
 }
