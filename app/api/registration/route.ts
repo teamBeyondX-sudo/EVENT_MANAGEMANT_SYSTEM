@@ -1,82 +1,58 @@
-import { NextResponse } from "next/server"
-
-// Mock database of event registrations
-const registrations = [
-  {
-    id: 1,
-    eventId: 1,
-    userId: "user1",
-    registrationDate: "2023-05-01T10:30:00Z",
-    status: "confirmed",
-    paymentStatus: "paid",
-    paymentAmount: 500,
-  },
-  {
-    id: 2,
-    eventId: 2,
-    userId: "user1",
-    registrationDate: "2023-05-02T14:15:00Z",
-    status: "confirmed",
-    paymentStatus: "free",
-    paymentAmount: 0,
-  },
-]
-
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const userId = searchParams.get("userId")
-  const eventId = searchParams.get("eventId")
-
-  let filteredRegistrations = [...registrations]
-
-  if (userId) {
-    filteredRegistrations = filteredRegistrations.filter((reg) => reg.userId === userId)
-  }
-
-  if (eventId) {
-    filteredRegistrations = filteredRegistrations.filter((reg) => reg.eventId === Number.parseInt(eventId))
-  }
-
-  return NextResponse.json(filteredRegistrations)
-}
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { registrations, events } from "@/lib/db/schema";
+import { authenticateUser } from "@/lib/auth/middleware";
+import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   try {
-    const data = await request.json()
-
-    // Validate required fields
-    if (!data.eventId || !data.userId) {
-      return NextResponse.json({ error: "eventId and userId are required" }, { status: 400 })
-    }
+    const user = await authenticateUser(request);
+    const { eventId } = await request.json();
 
     // Check if already registered
-    const existingRegistration = registrations.find((reg) => reg.eventId === data.eventId && reg.userId === data.userId)
+    const existingRegistration = await db.query.registrations.findFirst({
+      where: eq(registrations.eventId, eventId)
+    });
 
     if (existingRegistration) {
-      return NextResponse.json({ error: "User is already registered for this event" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Already registered" },
+        { status: 400 }
+      );
     }
 
-    // Create new registration
-    const newRegistration = {
-      id: registrations.length + 1,
-      eventId: data.eventId,
-      userId: data.userId,
-      registrationDate: new Date().toISOString(),
-      status: "confirmed",
-      paymentStatus: data.paymentStatus || "free",
-      paymentAmount: data.paymentAmount || 0,
-    }
+    // Create registration
+    const registration = await db.insert(registrations).values({
+      userId: user.id,
+      eventId,
+      status: 'confirmed',
+      createdAt: new Date()
+    }).returning();
 
-    // Add to our mock database
-    registrations.push(newRegistration)
-
-    return NextResponse.json({
-      success: true,
-      message: "Registration successful",
-      registration: newRegistration,
-    })
+    return NextResponse.json(registration[0]);
   } catch (error) {
-    console.error("Registration error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Registration failed" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    const user = await authenticateUser(request);
+    const userRegistrations = await db.query.registrations.findMany({
+      where: eq(registrations.userId, user.id),
+      with: {
+        event: true
+      }
+    });
+
+    return NextResponse.json(userRegistrations);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to fetch registrations" },
+      { status: 500 }
+    );
   }
 }
