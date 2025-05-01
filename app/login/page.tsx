@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -5,15 +6,15 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { SplineBackground } from "@/components/spline-background"
+import { motion } from "framer-motion"
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    role: "student"
   })
   const router = useRouter()
 
@@ -28,12 +29,7 @@ export default function LoginPage() {
       })
 
       if (res.ok) {
-        const data = await res.json()
-        if (data.user.role === 'admin') {
-          router.push('/admin')
-        } else {
-          router.push('/dashboard')
-        }
+        router.push('/dashboard')
       }
     } catch (error) {
       console.error('Login failed:', error)
@@ -41,83 +37,93 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black p-4">
-      <div className="w-full max-w-md space-y-8 bg-black/30 p-8 rounded-xl border border-white/10">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
-          <p className="text-gray-400">Please sign in to continue</p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <SplineBackground />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="w-full max-w-md"
+      >
+        <div className="backdrop-blur-lg bg-black/30 border border-white/10 rounded-2xl shadow-[0_0_15px_rgba(149,128,255,0.2)] p-6 md:p-8">
+          <div className="text-center mb-8">
+            <motion.h1
+              className="text-3xl font-bold text-white mb-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Welcome Back
+            </motion.h1>
+            <motion.p
+              className="text-gray-300"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Please sign in to continue
+            </motion.p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <RadioGroup 
-            defaultValue="student" 
-            className="grid grid-cols-2 gap-4 mb-4"
-            onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <motion.div
+              className="space-y-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Label htmlFor="email" className="text-white">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                className="bg-black/20 border-white/10 text-white"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              />
+            </motion.div>
+
+            <motion.div
+              className="space-y-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Label htmlFor="password" className="text-white">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                className="bg-black/20 border-white/10 text-white"
+                value={formData.password}
+                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                Sign In <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </motion.div>
+          </form>
+
+          <motion.p
+            className="text-center text-gray-400 mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
           >
-            <div>
-              <RadioGroupItem
-                value="student"
-                id="student"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="student"
-                className="flex flex-col items-center justify-between rounded-md border-2 border-white/10 bg-black/20 p-4 hover:bg-black/30 peer-checked:border-purple-600"
-              >
-                <span className="text-white">Student</span>
-              </Label>
-            </div>
-            <div>
-              <RadioGroupItem
-                value="admin"
-                id="admin"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="admin"
-                className="flex flex-col items-center justify-between rounded-md border-2 border-white/10 bg-black/20 p-4 hover:bg-black/30 peer-checked:border-purple-600"
-              >
-                <span className="text-white">Admin</span>
-              </Label>
-            </div>
-          </RadioGroup>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-white">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              className="bg-black/20 border-white/10 text-white"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-white">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              className="bg-black/20 border-white/10 text-white"
-              value={formData.password}
-              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-            />
-          </div>
-
-          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
-            Sign In <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </form>
-
-        <p className="text-center text-gray-400">
-          Don't have an account?{" "}
-          <Link href="/register" className="text-purple-400 hover:text-purple-300">
-            Register here
-          </Link>
-        </p>
-      </div>
+            Don't have an account?{" "}
+            <Link href="/register" className="text-purple-400 hover:text-purple-300">
+              Register here
+            </Link>
+          </motion.p>
+        </div>
+      </motion.div>
     </div>
   )
 }
