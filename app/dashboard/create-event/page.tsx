@@ -33,9 +33,9 @@ const formSchema = z.object({
   location: z.string().min(2, {
     message: "Location is required.",
   }),
-  formLink: z.string().url({
-    message: "Please enter a valid URL for the registration form.",
-  }),
+  googleFormLink: z.string().url({
+    message: "Please enter a valid Google Form URL.",
+  }).optional(),
   isPaid: z.boolean().default(false),
   price: z.string().optional(),
 })
