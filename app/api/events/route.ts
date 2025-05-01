@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { events } from '@/lib/db/schema';
@@ -47,7 +46,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const user = await authenticateUser(request);
-    if ((user as any).role !== 'admin') {
+    if (user.role !== 'admin') {
       return NextResponse.json({ error: 'Only admins can create events' }, { status: 403 });
     }
 
