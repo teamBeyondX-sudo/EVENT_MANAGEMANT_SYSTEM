@@ -1,20 +1,20 @@
 
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
+import * as schema from './schema';
 
-const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
-
-if (!sql) {
-  console.error('Database connection failed - missing DATABASE_URL');
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL environment variable is not set');
 }
 
-export const db = sql ? drizzle(sql) : null;
+const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
+export const db = sql ? drizzle(sql, { schema }) : null;
 
 export async function checkDatabaseConnection() {
   try {
     if (!db) throw new Error('Database not initialized');
     const result = await sql`SELECT 1`;
-    return result ? true : false;
+    return !!result;
   } catch (error) {
     console.error('Database connection error:', error);
     return false;
