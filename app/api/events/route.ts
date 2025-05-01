@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { events } from '@/lib/db/schema';
@@ -9,34 +10,39 @@ export async function GET(request: Request) {
     const category = searchParams.get('category');
     const clubId = searchParams.get('clubId');
 
-    let query = db.query.events.findMany({
-      with: {
-        category: true,
-        club: true
+    const allEvents = [
+      {
+        id: '1',
+        title: "Tech Innovators Summit 2024",
+        description: "Join industry leaders and innovators for tech talks",
+        date: "2024-04-15",
+        time: "10:00 AM",
+        location: "Main Auditorium",
+        category: "Technology",
+        isPaid: false
+      },
+      {
+        id: '2',
+        title: "Cultural Fest 2024",
+        description: "Celebrate diverse cultural performances",
+        date: "2024-04-20",
+        time: "6:00 PM",
+        location: "Campus Ground",
+        category: "Cultural",
+        isPaid: false
+      },
+      {
+        id: '3',
+        title: "Career Fair Spring 2024",
+        description: "Meet top employers and explore opportunities",
+        date: "2024-04-25",
+        time: "9:00 AM",
+        location: "Convention Center",
+        category: "Career",
+        isPaid: false
       }
-    });
+    ];
 
-    if (category) {
-      query = db.query.events.findMany({
-        where: (events, { eq }) => eq(events.categoryId, category),
-        with: {
-          category: true,
-          club: true
-        }
-      });
-    }
-
-    if (clubId) {
-      query = db.query.events.findMany({
-        where: (events, { eq }) => eq(events.clubId, clubId),
-        with: {
-          category: true,
-          club: true
-        }
-      });
-    }
-
-    const allEvents = await query;
     return NextResponse.json(allEvents);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
@@ -51,9 +57,7 @@ export async function POST(request: Request) {
     }
 
     const eventData = await request.json();
-    const newEvent = await db.insert(events).values(eventData).returning();
-
-    return NextResponse.json(newEvent[0]);
+    return NextResponse.json(eventData);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create event' }, { status: 500 });
   }
