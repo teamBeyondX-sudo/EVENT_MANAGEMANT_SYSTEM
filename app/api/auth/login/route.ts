@@ -4,27 +4,18 @@ import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
-    const { email, password, role } = await request.json();
+    const { email, password } = await request.json();
 
-    // Find user by email and role
     const user = await db.query.users.findFirst({
-      where: and(
-        eq(users.email, email),
-        eq(users.role, role)
-      ),
+      where: eq(users.email, email),
     });
 
-    if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-    }
-
-    const isValidPassword = await compare(password, user.password);
-    if (!isValidPassword) {
+    if (!user || !(await compare(password, user.password))) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
