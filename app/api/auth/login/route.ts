@@ -18,11 +18,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // Check if the role matches
-    if (user.role !== formData.role) {
-      return NextResponse.json({ error: 'Invalid role for this user' }, { status: 403 });
-    }
-
     const token = sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!);
 
     cookies().set('token', token, {
