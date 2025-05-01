@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
@@ -19,10 +18,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = sign(
-      { id: user.id, role: user.role },
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
+    // Check if the role matches
+    if (user.role !== formData.role) {
+      return NextResponse.json({ error: 'Invalid role for this user' }, { status: 403 });
+    }
+
+    const token = sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!);
 
     cookies().set('token', token, {
       httpOnly: true,
@@ -40,11 +41,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -52,5 +49,5 @@ export async function GET() {
   return NextResponse.json(
     { error: "Method not allowed" },
     { status: 405 }
-  );
+  )
 }

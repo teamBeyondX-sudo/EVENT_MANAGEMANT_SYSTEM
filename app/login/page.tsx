@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    role: "student"
   })
   const router = useRouter()
 
@@ -26,7 +28,12 @@ export default function LoginPage() {
       })
 
       if (res.ok) {
-        router.push('/dashboard')
+        const data = await res.json()
+        if (data.user.role === 'admin') {
+          router.push('/admin')
+        } else {
+          router.push('/dashboard')
+        }
       }
     } catch (error) {
       console.error('Login failed:', error)
@@ -42,6 +49,39 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <RadioGroup 
+            defaultValue="student" 
+            className="grid grid-cols-2 gap-4 mb-4"
+            onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+          >
+            <div>
+              <RadioGroupItem
+                value="student"
+                id="student"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="student"
+                className="flex flex-col items-center justify-between rounded-md border-2 border-white/10 bg-black/20 p-4 hover:bg-black/30 peer-checked:border-purple-600"
+              >
+                <span className="text-white">Student</span>
+              </Label>
+            </div>
+            <div>
+              <RadioGroupItem
+                value="admin"
+                id="admin"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="admin"
+                className="flex flex-col items-center justify-between rounded-md border-2 border-white/10 bg-black/20 p-4 hover:bg-black/30 peer-checked:border-purple-600"
+              >
+                <span className="text-white">Admin</span>
+              </Label>
+            </div>
+          </RadioGroup>
+
           <div className="space-y-2">
             <Label htmlFor="email" className="text-white">Email</Label>
             <Input
